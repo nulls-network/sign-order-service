@@ -7,7 +7,7 @@ Or [download](https://github.com/nulls-network/sign-order-service/releases) the 
 Run: ``./binaryName [port]``
 
 # 2. Use
-## 2.1 Sign the order
+## 2.1 Sign message
 URL： ``http://[yourIp]:[port]/sign``
 
 Method： ``POST``
@@ -18,12 +18,14 @@ Request body:
 
 ```json
 {
-    "order_no": "202203160233113243",
-    "chain_id": "100000001",
-    "pay_token": "TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t",
-    "pay_amount": "1000000",
-    "notify": "http://localhost:8080/notify",
-    "private_key": "6704f9a70210bdaedd08fc89b7711c2b05fe68de91117886fd4931882232ac7f"
+  "data": [
+    "202203160233113243",
+    "100000001",
+    "TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t",
+    "1000000",
+    "Y"
+  ],
+  "private_key": "6704f9a70210bdaedd08fc89b7711c2b05fe68de91117886fd4931882232ac7f"
 }
 ```
 
@@ -31,19 +33,18 @@ Response:
 
 ```json
 {
-  "order": {
-    "order_no": "202203160233113243",
-    "chain_id": "100000001",
-    "pay_token": "TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t",
-    "pay_amount": "1000000",
-    "notify": "http://localhost:8080/notify",
-    "private_key": "6704f9a70210bdaedd08fc89b7711c2b05fe68de91117886fd4931882232ac7f"
-  },
-  "sign": "314afe82e3771a031120a2ee96e509743918802a9992debe790d37bbbe8a2ada6a8496b2702722ff815260879346c0ac4f6aaa62b356de600a579b23c2f627b81c"
+  "data": [
+    "202203160233113243",
+    "100000001",
+    "TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t",
+    "1000000",
+    "Y"
+  ],
+  "sign": "f425fe95976653607cc79324eb6911b1ff642473eb5554c850eed3ba69419c125ea61d49f3c57a46da507ec86f24ab2b336f6b2b869e9a56c4ec30d4103406601b"
 }
 ```
 
-## 2.2 Parse the order signature
+## 2.2 Parse the message signature
 
 URL： ``http://[yourIp]:[port]/recover``
 
@@ -55,15 +56,14 @@ Request body:
 
 ```json
 {
-  "order": {
-    "order_no": "202203160233113243",
-    "chain_id": "100000001",
-    "pay_token": "TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t",
-    "pay_amount": "1000000",
-    "notify": "http://localhost:8080/notify",
-    "private_key": "6704f9a70210bdaedd08fc89b7711c2b05fe68de91117886fd4931882232ac7f"
-  },
-  "sign": "314afe82e3771a031120a2ee96e509743918802a9992debe790d37bbbe8a2ada6a8496b2702722ff815260879346c0ac4f6aaa62b356de600a579b23c2f627b81c"
+  "data": [
+    "202203160233113243",
+    "100000001",
+    "TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t",
+    "1000000",
+    "Y"
+  ],
+  "sign": "f425fe95976653607cc79324eb6911b1ff642473eb5554c850eed3ba69419c125ea61d49f3c57a46da507ec86f24ab2b336f6b2b869e9a56c4ec30d4103406601b"
 }
 ```
 
@@ -71,7 +71,7 @@ Response:
 
 ```json
 {
-  "pubKey": "5db351243a4e9c0166b34cc7250dfdc8cfbb7ee9"
+  "pub_key": "5db351243a4e9c0166b34cc7250dfdc8cfbb7ee9"
 }
 ```
 

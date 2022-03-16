@@ -30,14 +30,12 @@ fn slice_to_array_64<T>(slice: &[T]) -> Result<&[T; 64], TryFromSliceError> {
     }
 }
 
-fn to_bytes(order_no: String, chain_id: String, pay_token: String, pay_amount: String, notify: String) -> [u8;32] {
+fn to_bytes(data: Vec<String>) -> [u8;32] {
     let mut bytes: Vec<u8> = Vec::new();
 
-    bytes.put_slice(order_no.as_bytes());
-    bytes.put_slice(chain_id.as_bytes());
-    bytes.put_slice(pay_token.as_bytes());
-    bytes.put_slice(pay_amount.as_bytes());
-    bytes.put_slice(notify.as_bytes());
+    for s in data  {
+        bytes.put_slice(s.as_bytes());
+    }
 
     return keccak256(bytes.as_slice());
 }
@@ -58,8 +56,8 @@ impl From<(libsecp256k1::Signature, libsecp256k1::RecoveryId)> for Signature {
     }
 }
 
-pub fn sign_order(order_no: String, chain_id: String, pay_token: String, pay_amount: String, notify: String, private_key: String) -> Signature {
-    let bytes = to_bytes(order_no, chain_id, pay_token, pay_amount, notify);
+pub fn sign_data(data: Vec<String>, private_key: String) -> Signature {
+    let bytes = to_bytes(data);
     println!("Hash is: {}", hex::encode(bytes));
     let message: Message = Message::parse(&bytes);
     let pk = hex::decode(private_key).unwrap();
@@ -68,8 +66,8 @@ pub fn sign_order(order_no: String, chain_id: String, pay_token: String, pay_amo
     signature.into()
 }
 
-pub fn recover_order(order_no: String, chain_id: String, pay_token: String, pay_amount: String, notify: String, sign: String) -> Option<String> {
-    let bytes = to_bytes(order_no, chain_id, pay_token, pay_amount, notify);
+pub fn recover_data(data: Vec<String>, sign: String) -> Option<String> {
+    let bytes = to_bytes(data);
     println!("Hash is: {}", hex::encode(bytes));
     let message: Message = Message::parse(&bytes);
 
@@ -92,16 +90,17 @@ pub fn recover_order(order_no: String, chain_id: String, pay_token: String, pay_
 
 #[test]
 fn test() {
-    let order_no = String::from("123");
-    let chain_id = String::from("456");
-    let pay_token = String::from("shdchsjvcjhsagahsjfdahj");
-    let pay_amount = String::from("789012");
-    let notify = String::from("Y");
     let private_key = String::from("6704f9a70210bdaedd08fc89b7711c2b05fe68de91117886fd4931882232ac7f");
-    let signature = sign_order(order_no.clone(), chain_id.clone(), pay_token.clone(), pay_amount.clone(), notify.clone(), private_key.clone());
+    let mut vec: Vec<String> = Vec::new();
+    vec.push("202203160233113243".to_string());
+    vec.push("100000001".to_string());
+    vec.push("TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t".to_string());
+    vec.push("1000000".to_string());
+    vec.push("Y".to_string());
+    let signature = sign_data(vec.clone(), private_key.clone());
     println!("Sign is {:?}", hex::encode(signature.0));
 
-    let result = recover_order(order_no, chain_id, pay_token, pay_amount, notify, hex::encode(signature.0));
+    let result = recover_data(vec, hex::encode(signature.0));
 
     println!("PubKey is {:?}", result);
 }
