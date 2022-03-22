@@ -79,7 +79,7 @@ pub fn recover_data(data: Vec<String>, sign: String) -> Option<String> {
         Ok(pub_key) => {
             let pub_key_hash: [u8; 32] = keccak256(&pub_key.serialize()[1..65]);
             let eth_pub_key = &pub_key_hash.as_slice()[12..32];
-            Option::Some(hex::encode(eth_pub_key))
+            Option::Some(String::from("0x") + &hex::encode(eth_pub_key))
         }
         Err(e) => {
             println!("{}", e);

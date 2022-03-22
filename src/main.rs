@@ -29,13 +29,13 @@ async fn sign(item: web::Json<SignBody>) -> HttpResponse {
     let cloned_data = item.0.clone();
     let signature = lib::sign_data(item.0.data, item.0.private_key.unwrap());
 
-    HttpResponse::Ok().json(SignedBody{ data: cloned_data.data, sign: hex::encode(signature.0) }) // <- send response
+    HttpResponse::Ok().json(SignedBody{ data: cloned_data.data, sign: String::from("0x") + &hex::encode(signature.0) }) // <- send response
 }
 
-async fn recover(item: web::Json<SignedBody>) -> HttpResponse {
+async fn recover(mut item: web::Json<SignedBody>) -> HttpResponse {
     println!("Model: {:?}", &item);
 
-    let option = lib::recover_data( item.0.data, item.0.sign);
+    let option = lib::recover_data( item.0.data, item.0.sign.split_off(2));
 
     HttpResponse::Ok().json(SignRecover{ pub_key: option}) // <- send response
 }
